@@ -9,6 +9,7 @@ clock = pygame.time.Clock ()
 score_font = pygame.font.SysFont ('comicsans', 35)
 
 
+
 class player:
     def __init__(self):
         self.x = 235
@@ -19,8 +20,10 @@ class player:
         self.width = 50
         self.height = 50
 
+
     def draw(self):
         pygame.draw.rect (win, (0, 0, 0), (self.x, self.y, self.width, self.height))
+
 
     def getRect(self):
         return pygame.Rect (self.x, self.y, 50, 50)
@@ -44,6 +47,9 @@ class projectile:
         self.hit = False
 
     def draw(self):
+        #pro_img = pygame.image.load ('knife.jpg')
+        #pro_img = pygame.transform.scale (pro_img, (10, 10))
+        #win.blit (pro_img, (self.x, self.y))
         pygame.draw.rect (win, (0, 255, 0), (self.x, self.y, 50, 50))
 
     def set_pos(self):
@@ -117,12 +123,24 @@ def main(genomes, config):
                 output = nets[players.index (play)].activate (
                     (play.x, play.y, p.x, p.y, abs (play.y - 50), ydis_from_p,rxdis_from_p,lxdis_from_p,rdis_wall,win_w))
                 #move right add fitness for survival
+                if output[0] >= 0 and output[1] >= 0 and  play.x < 500 - 50:
+                    ge[x].fitness += 0.5
+                    play.moveRight ()
+                if output[0] >= 0 and output[1] < 0 and  play.x < 500 - 50:
+                    ge[x].fitness += 0.5
+                    play.moveRight ()
                 if output[0] >= 0 and play.x < 500 - 50:
-                    ge[x].fitness += 1
+                    ge[x].fitness += 0.5
                     play.moveRight ()
                 #move left add fitness for survival
+                if output[0] < 0 and output[1] < 0 and  play.x > 0 + 15:
+                    ge[x].fitness += 0.5
+                    play.moveLeft ()
+                if output[0] < 0 and output[1] >= 0 and  play.x > 0 + 15:
+                    ge[x].fitness += 0.5
+                    play.moveLeft ()
                 if output[0] < 0 and play.x > 0 + 15:
-                    ge[x].fitness += 1
+                    ge[x].fitness += 0.5
                     play.moveLeft ()
 
                 #checking the activation function tanh
@@ -140,8 +158,13 @@ def main(genomes, config):
                     ge[x].fitness += 10
 
                 #if main block is under projectile block take away fitness
-                if p.x == play.x:
-                    ge[x].fitness -= 10
+                for i in range(0,50):
+
+                    if p.x == play.x - i:
+                        ge[x].fitness -= 1
+                    if p.x == play.x + 1:
+                        ge[x].fitness -= 1
+
 
                 if p.get_Rect ().colliderect (play.getRect ()) or play.x < 0 or play.x > 500:
                     # print ('GameOver')
