@@ -94,7 +94,7 @@ num_hidden              = 0
 
 num_inputs              = 10
 
-num_outputs             = 1
+num_outputs             = 2
 
 
 
