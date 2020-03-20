@@ -178,7 +178,7 @@ def main(genomes, config):
     nets = []
     ge = []
     players = []
-    load_in = open('BEST!.pickle', 'rb')
+    load_in = open('BEST!(2).pickle', 'rb')
     bestNet = pickle.load(load_in)
 
     # implementing NEAT
