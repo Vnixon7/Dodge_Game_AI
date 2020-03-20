@@ -1,4 +1,4 @@
-import pygame, random, neat, os, pickle, math
+import pygame, random, neat, os, pickle
 
 pygame.init()
 pygame.font.init()
@@ -23,9 +23,6 @@ class player:
         self.width = 50
         self.height = 50
         self.img_count = 0
-        self.disE = [100]
-        self.disM = [100]
-        self.disX = [100]
 
         self.R_imgs = [pygame.transform.scale(pygame.image.load('right1.jpg'), (self.height, self.width)),
                        pygame.transform.scale(pygame.image.load('right2.jpg'), (self.height, self.width)),
@@ -49,21 +46,21 @@ class player:
 
                 self.img = self.R_imgs[0]
 
-            elif self.img_count == 2:
+            elif self.img_count == 1:
 
                 self.img = self.R_imgs[1]
 
-            elif self.img_count == 4:
+            elif self.img_count == 2:
 
                 self.img = self.R_imgs[2]
 
-            elif self.img_count == 6:
+            elif self.img_count == 3:
 
                 self.img = self.R_imgs[3]
-            elif self.img_count == 8:
+            elif self.img_count == 4:
 
                 self.img = self.R_imgs[4]
-            elif self.img_count == 10:
+            elif self.img_count == 5:
 
                 self.img = self.R_imgs[5]
                 self.img_count = 0
@@ -73,23 +70,23 @@ class player:
 
                 self.img = self.L_imgs[0]
 
-            elif self.img_count == 2:
+            elif self.img_count == 1:
 
                 self.img = self.L_imgs[1]
 
-            elif self.img_count == 4:
+            elif self.img_count == 2:
 
                 self.img = self.L_imgs[2]
 
-            elif self.img_count == 6:
+            elif self.img_count == 3:
 
                 self.img = self.L_imgs[3]
 
-            elif self.img_count == 8:
+            elif self.img_count == 4:
 
                 self.img = self.L_imgs[4]
 
-            elif self.img_count == 10:
+            elif self.img_count == 5:
 
                 self.img = self.L_imgs[5]
                 self.img_count = 0
@@ -107,31 +104,21 @@ class player:
         self.x -= 10
         self.left = True
         self.right = False
-        self.stand = False
 
     def moveRight(self):
         self.x += 10
         self.right = True
         self.left = False
-        self.stand = False
-
-    def Xdis(self, p1):
-        if p1.x > self.x:
-            DisXP1 = p1.x - self.x
-        else:
-            DisXP1 = self.x - p1.x
-
-        return DisXP1
 
 
 class projectile:
 
     def __init__(self):
-        self.x = random.randint(50, win_w - 50)
+        self.x = random.randint(50, 450)
         self.y = 0
         self.width = 50
         self.height = 145
-        self.vel = 10
+        self.vel = 15
         self.ANIMATION_TIME = 5
         self.img_count = 0
         self.IMGS = projectile_imgs
@@ -165,14 +152,14 @@ class projectile:
         self.y += self.vel
 
     def get_Rect(self):
-        return pygame.Rect(self.x, self.y, 50, 50)
+        return pygame.Rect(self.x, self.y, self.width, self.height)
 
 
-def draw_window(players, project1, score):
+def draw_window(players, project, score):
     win.fill((255, 255, 255))
     for play in players:
         play.draw()
-    for p in project1:
+    for p in project:
         p.draw()
     text = score_font.render(('Score: ' + str(int(score))), 1, (0, 0, 0))
     win.blit(text, (0, 15))
@@ -181,29 +168,29 @@ def draw_window(players, project1, score):
     pygame.display.update()
 
 
-newNum = 700
 gen = 0
-DisProjectP1 = 0
+newNum = 1000
 
 
 # main fitness function
 def main(genomes, config):
-    global win, gen, newNum, DisProjectP1
+    global win, gen, newNum
     nets = []
     ge = []
     players = []
+    load_in = open('BEST!.pickle', 'rb')
+    bestNet = pickle.load(load_in)
 
     # implementing NEAT
     for genome_id, genome in genomes:
         net = neat.nn.FeedForwardNetwork.create(genome, config)
-        nets.append(net)
+        # nets.append(net)
+        nets.append(bestNet)
         players.append(player())
         genome.fitness = 0
         ge.append(genome)
-    p1 = projectile()
 
-    project1 = [p1]
-
+    project = [projectile()]
     clock = pygame.time.Clock()
     score = 0
 
@@ -230,59 +217,63 @@ def main(genomes, config):
 
         # inputs for activation function
         for x, play in enumerate(players):
-            for p1 in project1:
-
-                DistEuclideanP1 = math.sqrt((play.x - p1.x) ** 2 + (play.y - p1.y) ** 2)
-                DisManhattanP1 = abs(play.x - p1.x) + abs(play.y - p1.y)
-
-                DisYP1 = play.y + play.height - p1.y
-                Xdis = play.Xdis(p1)
-                play.disE.append(int(DistEuclideanP1))
-                play.disM.append(DisManhattanP1)
-                play.disX.append(Xdis)
-
+            for p in project:
+                ydis_from_p = play.y - p.y - play.height
+                xdis_from_p = abs(play.x + p.x - play.width)
+                rdis_wall = play.x - win_w - play.width
+                ldis_wall = play.x + play.width
                 output = nets[players.index(play)].activate(
-                    (play.x, play.y, p1.x, p1.y, DisManhattanP1, DistEuclideanP1, play.width, play.height,
-                     p1.width, p1.height, Xdis, DisYP1))
+                    (play.x, play.y, p.x, p.y, abs(play.y + p.height), ydis_from_p, xdis_from_p, rdis_wall, ldis_wall,
+                     win_w, play.width, play.height, p.width, p.height))
 
-                # move the projectiles
-                for p in project1:
-                    p.move()
-
-                # moving right
-                if output[0] > 0 and output[1] < 0:
-                    # ge[x].fitness += 0.05
+                # move right add fitness for survival
+                if output[0] > 0 and output[1] > 0 and play.x < win_w - play.width:
+                    # ge[x].fitness += 0.5
                     play.moveRight()
-                # moving left
-                if output[0] < 0 and output[1] > 0:
-                    # ge[x].fitness += 0.05
+                if output[0] > 0 and output[1] < 0 and play.x < win_w - play.width:
+                    # ge[x].fitness += 0.5
+                    play.moveRight()
+                if output[0] > 0 and play.x < win_w - play.width:
+                    # ge[x].fitness += 0.5
+                    play.moveRight()
+
+                # move left add fitness for survival
+                if output[0] < 0 and output[1] < 0 and play.x > 0 + 15:
+                    # ge[x].fitness += 0.5
+                    play.moveLeft()
+                if output[0] < 0 and output[1] > 0 and play.x > 0 + 15:
+                    # ge[x].fitness += 0.5
+                    play.moveLeft()
+                if output[0] < 0 and play.x > 0 + 15:
+                    # ge[x].fitness += 0.5
                     play.moveLeft()
 
                 # standing
-                if output[0] == 0 and output[1] == 0:
-                    # ge[x].fitness += 0.05
+                if output[0] == 0 or output[1] == 0:
+                    # ge[x].fitness += 0.5
                     play.stand = True
-                    play.right = False
                     play.left = False
+                    play.right = False
                     play.x += 0
 
                 # checking the activation function tanh
                 # print ('output 0: ', output[0])
 
+                # move the projectiles
+                p.move()
+
                 # if projectile passes main block add fitness
-                if p1.y == 450:
-                    p1.x = random.randint(15, 485)
-                    p1.y = 0
+                if p.y == win_h - 50:
+                    p.y = 0
+                    p.x = random.randint(15, win_w - 15)
                     score += 1
                     ge[x].fitness += 10
-                    # if projectile passes main block add fitness
 
-                # print('MANHATTAN: ', DisManhattanP1)
-                # print('EUCLIDEAN: ', DistEuclideanP1)
-                if DisManhattanP1 < 220 and DistEuclideanP1 < 180 and Xdis < 85:
+                # if main block is under projectile block take away fitness
+                if xdis_from_p <= 50:
                     ge[x].fitness -= 1
 
-                if p1.get_Rect().colliderect(play.getRect()):
+                if p.get_Rect().colliderect(play.getRect()) or play.x < 0 or play.x > win_w:
                     # print ('GameOver')
                     # p.vel = 0
                     # play.vel = 0
@@ -290,20 +281,11 @@ def main(genomes, config):
                     players.pop(x)
                     nets.pop(x)
                     ge.pop(x)
-                    gen += 1
 
-                # pop out on other side of screen if screen exceeded
-                if play.x >= win_w - play.width and play.right:
-                    play.x = 12
-                if play.x <= 11 and play.left:
-                    play.x = win_w - play.width - 1
-
-        draw_window(players, project1, score)
-
-        # saving best model
+        draw_window(players, project, score)
         if score > newNum:
-            pickle.dump(nets[0], open("best3.pickle", "wb"))
-            newNum += 15
+            pickle.dump(nets[0], open("BEST!(2).pickle", "wb"))
+            newNum += 50
 
             break
 
@@ -319,7 +301,7 @@ def run(config_file):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    winner = p.run(main, 1500)
+    winner = p.run(main, 500)
     print('\nBest genome:\n{!s}'.format(winner))
 
 
