@@ -104,11 +104,13 @@ class player:
         self.x -= 10
         self.left = True
         self.right = False
+        self.stand = False
 
     def moveRight(self):
         self.x += 10
         self.right = True
         self.left = False
+        self.stand = False
 
 
 class projectile:
