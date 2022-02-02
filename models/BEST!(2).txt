@@ -1,0 +1,6 @@
+€•Š      Œneat.nn.feed_forward”ŒFeedForwardNetwork”“”)”}”(Œinput_nodes”]”(JÿÿÿÿJþÿÿÿJýÿÿÿJüÿÿÿJûÿÿÿJúÿÿÿJùÿÿÿJøÿÿÿJ÷ÿÿÿJöÿÿÿJõÿÿÿJôÿÿÿJóÿÿÿJòÿÿÿeŒoutput_nodes”]”(K KeŒ
+node_evals”]”((K Œneat.activations”Œtanh_activation”“”Œneat.aggregations”Œsum_aggregation”“”G?íMv–Ñ½G?ð      ]”(JÿÿÿÿG?ã íp&Ò–†”JþÿÿÿG¿­¼nÂî†”JýÿÿÿG¿ü>jÏ´x(†”JûÿÿÿG?å¸9h^Ø†”JùÿÿÿG?ãšbê¸†”JøÿÿÿG?ë5¾*>
+†”J÷ÿÿÿG¿÷šY2ïv†”JöÿÿÿG?ãÑ~LÿæÍ†”JõÿÿÿG¿ôÉUË^_†”JôÿÿÿG¿ðUº_a†”JòÿÿÿG?ùÙB8†”et”(MZh
+hG¿é/_ãcG?ð      ]”JüÿÿÿG?»×P[eÀ†”at”(Kh
+hG@
+t—ûA¢.G?ð      ]”(JþÿÿÿG¿í49Ç6ª†”JýÿÿÿG?`¹·¸}` †”JüÿÿÿG¿åcÕJel†”JûÿÿÿG¿ÂÒ‰º_Áê†”JúÿÿÿG¿öM[ ô$"†”JùÿÿÿG¿ßugá+¾†”JøÿÿÿG¿´:séÿp†”J÷ÿÿÿG?ÏÌt ‰†”JõÿÿÿG¿Ýª¯ÁP;†”JôÿÿÿG¿ÌYwŒ`†”JóÿÿÿG¿´AjŽ=M †”JòÿÿÿG?ð3{ª„†”MZG¿ð^½©ž†”et”eŒvalues”}”(JÿÿÿÿKJþÿÿÿMJýÿÿÿMÎJüÿÿÿM³JûÿÿÿM!JúÿÿÿJ«ÿÿÿJùÿÿÿM«JøÿÿÿJéýÿÿJ÷ÿÿÿKAJöÿÿÿMôJõÿÿÿK2JôÿÿÿK2JóÿÿÿK2JòÿÿÿK‘K G¿ð      KG¿ð      MZG?ð      uub.
